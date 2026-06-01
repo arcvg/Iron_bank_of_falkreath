@@ -701,7 +701,7 @@ async function crSale(){
   document.getElementById('cr-sq').value='1';document.getElementById('cr-sd').value='';
   toast(`${qty} ${name} sold for ${rev.toFixed(0)}⚙.`,true);await loadAll();
 }
-async function crRemove(name){await api({action:'removeCropItem',name});await loadAll();}
+async function crRemove(name){await api({action:'deleteCropItem',name});await loadAll();}
 async function crSavePrice(name,price){const c=crItems.find(x=>x.name===name);if(c)await api({action:'updateCropItem',name,price,stock:c.stock,threshold:c.thresh});}
 async function crSaveThresh(name,thresh){const c=crItems.find(x=>x.name===name);if(c)await api({action:'updateCropItem',name,price:c.price,stock:c.stock,threshold:thresh});}
 
@@ -738,7 +738,7 @@ async function fdSale(){
   document.getElementById('fd-sq').value='1';document.getElementById('fd-sd').value='';
   toast(`${qty} ${name} sold for ${rev.toFixed(0)}⚙.`,true);await loadAll();
 }
-async function fdRemove(name){await api({action:'removeFoodItem',name});await loadAll();}
+async function fdRemove(name){await api({action:'deleteFoodItem',name});await loadAll();}
 async function fdSavePrice(name,price){const f=fdItems.find(x=>x.name===name);if(f)await api({action:'updateFoodItem',name,price,stock:f.stock,threshold:f.thresh});}
 async function fdSaveThresh(name,thresh){const f=fdItems.find(x=>x.name===name);if(f)await api({action:'updateFoodItem',name,price:f.price,stock:f.stock,threshold:thresh});}
 
