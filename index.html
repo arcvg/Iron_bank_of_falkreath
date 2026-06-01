@@ -661,25 +661,25 @@ async function commAdd(){
   if(!client){toast('Enter a client name.',false);return;}
   if(qty<=0||price<=0){toast('Enter valid qty and price.',false);return;}
   const id='COMM-'+Date.now(),total=qty*price;
-  await api({action:'addCommission',id,client,item,qty,price,total,date,note,status:'pending'});
+  await api({action:'addComm',id,client,item,qty,price,total,date,note,status:'pending'});
   document.getElementById('c-client').value='';document.getElementById('c-qty').value='1';document.getElementById('c-note').value='';
   toast(`Commission for ${client} placed.`,true);await loadAll();
 }
-async function commStatus(id,status){await api({action:'updateCommission',...commissions.find(c=>c.id===id),status});toast(`Marked as ${status}.`,status==='completed');await loadAll();}
-async function commDel(id){await api({action:'deleteCommission',id});toast('Commission removed.',true);await loadAll();}
+async function commStatus(id,status){await api({action:'updateCommStatus',...commissions.find(c=>c.id===id),status});toast(`Marked as ${status}.`,status==='completed');await loadAll();}
+async function commDel(id){await api({action:'deleteComm',id});toast('Commission removed.',true);await loadAll();}
 
 // ── CROPS ──────────────────────────────────────────────────────
 async function crAdd(){
   const name=document.getElementById('cr-nn').value.trim().toLowerCase(),price=parseFloat(document.getElementById('cr-np').value)||0;
   if(!name){toast('Enter a crop name.',false);return;}
-  await api({action:'saveCropItem',name,price,stock:0,threshold:10});
+  await api({action:'addCropItem',name,price,stock:0,threshold:10});
   document.getElementById('cr-nn').value='';document.getElementById('cr-np').value='';toast(`${name} added.`,true);await loadAll();
 }
 async function crAdj(){
   const name=document.getElementById('cr-sa-item').value,qty=parseInt(document.getElementById('cr-sa-qty').value)||0;
   const c=crItems.find(x=>x.name===name);if(!c)return;
   const newStock=Math.max(0,c.stock+qty);
-  await api({action:'saveCropItem',name,price:c.price,stock:newStock,threshold:c.thresh});
+  await api({action:'updateCropItem',name,price:c.price,stock:newStock,threshold:c.thresh});
   document.getElementById('cr-sa-qty').value='';toast(`${name}: ${newStock} units`,true);await loadAll();
 }
 function crSalePrev(){
@@ -696,27 +696,27 @@ async function crSale(){
   if(qty<=0){toast('Enter qty.',false);return;}
   if(qty>c.stock){toast(`Only ${c.stock} in stock.`,false);return;}
   const rev=qty*c.price;
-  await api({action:'saveCropItem',name,price:c.price,stock:Math.max(0,c.stock-qty),threshold:c.thresh});
+  await api({action:'updateCropItem',name,price:c.price,stock:Math.max(0,c.stock-qty),threshold:c.thresh});
   await api({action:'addCropSale',id:uid(),name,qty,price:c.price,revenue:rev,date});
   document.getElementById('cr-sq').value='1';document.getElementById('cr-sd').value='';
   toast(`${qty} ${name} sold for ${rev.toFixed(0)}⚙.`,true);await loadAll();
 }
 async function crRemove(name){await api({action:'removeCropItem',name});await loadAll();}
-async function crSavePrice(name,price){const c=crItems.find(x=>x.name===name);if(c)await api({action:'saveCropItem',name,price,stock:c.stock,threshold:c.thresh});}
-async function crSaveThresh(name,thresh){const c=crItems.find(x=>x.name===name);if(c)await api({action:'saveCropItem',name,price:c.price,stock:c.stock,threshold:thresh});}
+async function crSavePrice(name,price){const c=crItems.find(x=>x.name===name);if(c)await api({action:'updateCropItem',name,price,stock:c.stock,threshold:c.thresh});}
+async function crSaveThresh(name,thresh){const c=crItems.find(x=>x.name===name);if(c)await api({action:'updateCropItem',name,price:c.price,stock:c.stock,threshold:thresh});}
 
 // ── FOOD ──────────────────────────────────────────────────────
 async function fdAdd(){
   const name=document.getElementById('fd-nn').value.trim().toLowerCase(),price=parseFloat(document.getElementById('fd-np').value)||0;
   if(!name){toast('Enter a food name.',false);return;}
-  await api({action:'saveFoodItem',name,price,stock:0,threshold:5});
+  await api({action:'updateFoodItem',name,price,stock:0,threshold:5});
   document.getElementById('fd-nn').value='';document.getElementById('fd-np').value='';toast(`${name} added.`,true);await loadAll();
 }
 async function fdAdj(){
   const name=document.getElementById('fd-sa-item').value,qty=parseInt(document.getElementById('fd-sa-qty').value)||0;
   const f=fdItems.find(x=>x.name===name);if(!f)return;
   const newStock=Math.max(0,f.stock+qty);
-  await api({action:'saveFoodItem',name,price:f.price,stock:newStock,threshold:f.thresh});
+  await api({action:'updateFoodItem',name,price:f.price,stock:newStock,threshold:f.thresh});
   document.getElementById('fd-sa-qty').value='';toast(`${name}: ${newStock} units`,true);await loadAll();
 }
 function fdSalePrev(){
@@ -733,14 +733,14 @@ async function fdSale(){
   if(qty<=0){toast('Enter qty.',false);return;}
   if(qty>f.stock){toast(`Only ${f.stock} in stock.`,false);return;}
   const rev=qty*f.price;
-  await api({action:'saveFoodItem',name,price:f.price,stock:Math.max(0,f.stock-qty),threshold:f.thresh});
+  await api({action:'updateFoodItem',name,price:f.price,stock:Math.max(0,f.stock-qty),threshold:f.thresh});
   await api({action:'addFoodSale',id:uid(),name,qty,price:f.price,revenue:rev,date});
   document.getElementById('fd-sq').value='1';document.getElementById('fd-sd').value='';
   toast(`${qty} ${name} sold for ${rev.toFixed(0)}⚙.`,true);await loadAll();
 }
 async function fdRemove(name){await api({action:'removeFoodItem',name});await loadAll();}
-async function fdSavePrice(name,price){const f=fdItems.find(x=>x.name===name);if(f)await api({action:'saveFoodItem',name,price,stock:f.stock,threshold:f.thresh});}
-async function fdSaveThresh(name,thresh){const f=fdItems.find(x=>x.name===name);if(f)await api({action:'saveFoodItem',name,price:f.price,stock:f.stock,threshold:thresh});}
+async function fdSavePrice(name,price){const f=fdItems.find(x=>x.name===name);if(f)await api({action:'updateFoodItem',name,price,stock:f.stock,threshold:f.thresh});}
+async function fdSaveThresh(name,thresh){const f=fdItems.find(x=>x.name===name);if(f)await api({action:'updateFoodItem',name,price:f.price,stock:f.stock,threshold:thresh});}
 
 // ── RENDER ─────────────────────────────────────────────────────
 function renderAll(){
