@@ -517,7 +517,7 @@ select option{background:var(--bg3);}
 <script>
 const IL={pouches:'Pouches',sacthel:'Satchel',backpack:'Backpack',nice_clothe:'Nice Clothe'};
 let IP={pouches:40,sacthel:50,backpack:75,nice_clothe:0};
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwLpf_lhNk2_Oy5yMPn_ssrwkSqTICvVZjVIoN4B3hLXChSmE3ZQCwc-V9WBQUo_oJk/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycby7sfUqDbIJ8vjSEOp1ioXEEZfNZSwDMuAHHQRlp0YNdpBgWHK1FJgz8PKxin5UDtPN/exec';
 let workers=[],batches=[],commissions=[],tStock={},tThresh={},materials=[],itemCosts={},crItems=[],crSales=[],fdItems=[],fdSales=[];
 
 window.onload=()=>{launch();};
@@ -536,15 +536,15 @@ async function loadAll(){
     const d=await api({action:'getAll'});if(d.error)throw new Error(d.error);
     workers=(d.workers||[]).map(w=>({name:w.Name,cut:parseFloat(w.Cut)||30}));
     batches=(d.batches||[]).map(b=>({id:b.ID,worker:b.Worker,item:b.Item,qty:parseFloat(b.Qty)||0,price:parseFloat(b.Price)||0,paid:b.Paid,date:b.Date}));
-    commissions=(d.commissions||[]).map(c=>({id:c.ID,client:c.Client,item:c.Item,qty:parseFloat(c.Qty)||0,price:parseFloat(c.Price)||0,total:parseFloat(c.Total)||0,date:c.Date,note:c.Note,status:c.Status}));
-    tStock={};(d.tStock||[]).forEach(r=>{tStock[r.Item]={stock:parseFloat(r.Stock)||0,thresh:parseFloat(r.Threshold)||5};});
+    commissions=(d.comms||[]).map(c=>({id:c.ID,client:c.Client,item:c.Item,qty:parseFloat(c.Qty)||0,price:parseFloat(c.Price)||0,total:parseFloat(c.Total)||0,date:c.Date,note:c.Note,status:c.Status}));
+    tStock={};(d.tailorStock||[]).forEach(r=>{tStock[r.Item]={stock:parseFloat(r.Stock)||0,thresh:parseFloat(r.Threshold)||5};});
     materials=(d.materials||[]).map(m=>({name:m.Name,price:parseFloat(m.Price)||0}));
     itemCosts={};(d.itemCosts||[]).forEach(r=>{itemCosts[r.Item]=parseFloat(r.Cost)||0;});
     if(!itemCosts.pouches)itemCosts={pouches:26.75,sacthel:33.5,backpack:49.25,nice_clothe:83.5};
-    crItems=(d.crItems||[]).map(c=>({name:c.Name,price:parseFloat(c.Price)||0,stock:parseFloat(c.Stock)||0,thresh:parseFloat(c.Threshold)||10}));
-    crSales=(d.crSales||[]).map(s=>({id:s.ID,name:s.Name,qty:parseFloat(s.Qty)||0,price:parseFloat(s.Price)||0,rev:parseFloat(s.Revenue)||0,date:s.Date})).reverse();
-    fdItems=(d.fdItems||[]).map(f=>({name:f.Name,price:parseFloat(f.Price)||0,stock:parseFloat(f.Stock)||0,thresh:parseFloat(f.Threshold)||5}));
-    fdSales=(d.fdSales||[]).map(s=>({id:s.ID,name:s.Name,qty:parseFloat(s.Qty)||0,price:parseFloat(s.Price)||0,rev:parseFloat(s.Revenue)||0,date:s.Date})).reverse();
+    crItems=(d.cropItems||[]).map(c=>({name:c.Name,price:parseFloat(c.Price)||0,stock:parseFloat(c.Stock)||0,thresh:parseFloat(c.Threshold)||10}));
+    crSales=(d.cropSales||[]).map(s=>({id:s.ID,name:s.Name,qty:parseFloat(s.Qty)||0,price:parseFloat(s.Price)||0,rev:parseFloat(s.Revenue)||0,date:s.Date})).reverse();
+    fdItems=(d.foodItems||[]).map(f=>({name:f.Name,price:parseFloat(f.Price)||0,stock:parseFloat(f.Stock)||0,thresh:parseFloat(f.Threshold)||5}));
+    fdSales=(d.foodSales||[]).map(s=>({id:s.ID,name:s.Name,qty:parseFloat(s.Qty)||0,price:parseFloat(s.Price)||0,rev:parseFloat(s.Revenue)||0,date:s.Date})).reverse();
     bkAccounts=(d.bkAccounts||[]).map(a=>({id:a.ID,name:a.Name,balance:parseFloat(a.Balance)||0}));
     bkTransactions=(d.bkTransactions||[]).map(t=>({id:t.ID,account:t.Account,type:t.Type,amount:parseFloat(t.Amount)||0,balance:parseFloat(t.Balance)||0,note:t.Note||'',date:t.Date}));
     bkLoans=(d.bkLoans||[]).map(l=>({id:l.ID,borrower:l.Borrower,principal:parseFloat(l.Principal)||0,interest:parseFloat(l.Interest)||0,total:parseFloat(l.Total)||0,due:l.Due||'',date:l.Date,status:l.Status||'active'}));
